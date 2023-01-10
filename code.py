@@ -26,3 +26,10 @@ def __init__(self):
         self.game_over = False
         self.move_lock = Lock()
         self.reset_tetromino()
+
+def reset_tetromino(self):
+        self.tetromino = random.choice(Tetris.TETROMINOS)[:]
+        self.tetromino_color = random.randint(1, len(COLORS)-1)
+        self.tetromino_offset = [-2, Tetris.FIELD_WIDTH//2]
+        self.game_over = any(not self.is_cell_free(r, c) for (r, c) in self.get_tetromino_coords())
+    
