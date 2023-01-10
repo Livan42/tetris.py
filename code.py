@@ -120,3 +120,15 @@ class Application(tk.Frame):
         self.status_msg.pack(side="top")
         self.game_over_msg = tk.Label(self, anchor='w', width=11, font=("Courier", 24), fg='red')
         self.game_over_msg.pack(side="top")
+
+    def update(self):
+        for i, _id in enumerate(self.rectangles):
+            color_num = self.tetris.get_color(i//self.tetris.FIELD_WIDTH, i % self.tetris.FIELD_WIDTH)
+            self.canvas.itemconfig(_id, fill=COLORS[color_num])
+    
+        self.status_msg['text'] = "Score: {}\nLevel: {}".format(self.tetris.score, self.tetris.level)
+        self.game_over_msg['text'] = "GAME OVER.\nPress UP\nto reset" if self.tetris.game_over else ""
+
+root = tk.Tk()
+app = Application(master=root)
+app.mainloop()
