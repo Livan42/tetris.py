@@ -66,3 +66,26 @@ def apply_tetromino(self):
                 if not self.game_over:
                     self.apply_tetromino()
 
+    def rotate(self):
+        with self.move_lock:
+            if self.game_over:
+                self.__init__()
+                return
+
+            ys = [r for (r, c) in self.tetromino]
+            xs = [c for (r, c) in self.tetromino]
+            size = max(max(ys) - min(ys), max(xs)-min(xs))
+            rotated_tetromino = [(c, size-r) for (r, c) in self.tetromino]
+            wallkick_offset = self.tetromino_offset[:]
+            tetromino_coord = [(r+wallkick_offset[0], c + wallkick_offset[1]) for (r, c) in rotated_tetromino]
+            min_x = min(c for r, c in tetromino_coord)
+            max_x = max(c for r, c in tetromino_coord)
+            max_y = max(r for r, c in tetromino_coord)
+            wallkick_offset[1] -= min(0, min_x)
+            wallkick_offset[1] += min(0, Tetris.FIELD_WIDTH - (1 + max_x))
+            wallkick_offset[0] += min(0, Tetris.FIELD_HEIGHT - (1 + max_y))
+
+            tetromino_coord = [(r+wallkick_offset[0], c + wallkick_offset[1]) for (r, c) in rotated_tetromino]
+            if all(self.is_cell_free(r, c) for (r, c) in tetromino_coord):
+                self.tetromino, self.tetromino_offset = rotated_tetromino, wallkick_offset
+
