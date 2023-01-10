@@ -17,3 +17,12 @@ class Tetris():
         [(0, 0), (1, 0), (1, 1), (2,1)], # S
         [(0, 1), (1, 1), (2, 1), (3,1)], # I
     ]
+
+def __init__(self):
+        self.field = [[0 for c in range(Tetris.FIELD_WIDTH)] for r in range(Tetris.FIELD_HEIGHT)]
+        self.score = 0
+        self.level = 0
+        self.total_lines_eliminated = 0
+        self.game_over = False
+        self.move_lock = Lock()
+        self.reset_tetromino()
