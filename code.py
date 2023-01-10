@@ -33,3 +33,18 @@ def reset_tetromino(self):
         self.tetromino_offset = [-2, Tetris.FIELD_WIDTH//2]
         self.game_over = any(not self.is_cell_free(r, c) for (r, c) in self.get_tetromino_coords())
     
+def get_tetromino_coords(self):
+        return [(r+self.tetromino_offset[0], c + self.tetromino_offset[1]) for (r, c) in self.tetromino]
+
+def apply_tetromino(self):
+        for (r, c) in self.get_tetromino_coords():
+            self.field[r][c] = self.tetromino_color
+
+        new_field = [row for row in self.field if any(tile == 0 for tile in row)]
+        lines_eliminated = len(self.field)-len(new_field)
+        self.total_lines_eliminated += lines_eliminated
+        self.field = [[0]*Tetris.FIELD_WIDTH for x in range(lines_eliminated)] + new_field
+        self.score += Tetris.SCORE_PER_ELIMINATED_LINES[lines_eliminated] * (self.level + 1)
+        self.level = self.total_lines_eliminated // 10
+        self.reset_tetromino()
+
