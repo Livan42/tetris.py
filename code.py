@@ -89,3 +89,34 @@ def apply_tetromino(self):
             if all(self.is_cell_free(r, c) for (r, c) in tetromino_coord):
                 self.tetromino, self.tetromino_offset = rotated_tetromino, wallkick_offset
 
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.tetris = Tetris()
+        self.pack()
+        self.create_widgets()
+        self.update_clock()
+
+    def update_clock(self):
+        self.tetris.move(1, 0)
+        self.update()  
+        self.master.after(int(1000*(0.66**self.tetris.level)), self.update_clock)
+    
+    def create_widgets(self):
+        PIECE_SIZE = 30
+        self.canvas = tk.Canvas(self, height=PIECE_SIZE*self.tetris.FIELD_HEIGHT, 
+                                      width = PIECE_SIZE*self.tetris.FIELD_WIDTH, bg="black", bd=0)
+        self.canvas.bind('<Left>', lambda _: (self.tetris.move(0, -1), self.update()))
+        self.canvas.bind('<Right>', lambda _: (self.tetris.move(0, 1), self.update()))
+        self.canvas.bind('<Down>', lambda _: (self.tetris.move(1, 0), self.update()))
+        self.canvas.bind('<Up>', lambda _: (self.tetris.rotate(), self.update()))
+        self.canvas.focus_set()
+        self.rectangles = [
+            self.canvas.create_rectangle(c*PIECE_SIZE, r*PIECE_SIZE, (c+1)*PIECE_SIZE, (r+1)*PIECE_SIZE)
+                for r in range(self.tetris.FIELD_HEIGHT) for c in range(self.tetris.FIELD_WIDTH)
+        ]
+        self.canvas.pack(side="left")
+        self.status_msg = tk.Label(self, anchor='w', width=11, font=("Courier", 24))
+        self.status_msg.pack(side="top")
+        self.game_over_msg = tk.Label(self, anchor='w', width=11, font=("Courier", 24), fg='red')
+        self.game_over_msg.pack(side="top")
